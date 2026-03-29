@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Generated index data (built at runtime)
+phase2_index/
+phase1_extraction/output/
+phase3_extraction/output/
+predii_app/.uploaded_docs/
+
+# Frontend
+predii_app/frontend/node_modules/
+predii_app/frontend/dist/
+
+# Misc
+.DS_Store
+*.log
+.env
+*.pdf
+*.txt
+!predii_app/frontend/src/**/*.jsx

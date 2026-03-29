@@ -1,0 +1,31 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: #0b0d12;
+  color: #e4e8ef;
+}
+
+/* Minimal utility color tokens used by existing JSX classes */
+.bg-surface-0 { background-color: #0b0d12; }
+.bg-surface-1 { background-color: #121620; }
+.bg-surface-2 { background-color: #181d2a; }
+.bg-surface-3 { background-color: #23293a; }
+.border-surface-border { border-color: #2b3348; }
+.text-ink-0 { color: #e8edf8; }
+.text-ink-1 { color: #c4cddd; }
+.text-ink-2 { color: #8d98ad; }
+.bg-brand { background-color: #4f8cff; }
+.hover\:bg-brand-dim:hover { background-color: #3f78e0; }
+.text-brand { color: #73a3ff; }
+
+/* basic table rendering */
+table { border-collapse: collapse; width: 100%; }
+th, td { vertical-align: top; }
