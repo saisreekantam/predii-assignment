@@ -1,6 +1,18 @@
 # Predii Vehicle Spec Extractor
 
-A RAG (Retrieval-Augmented Generation) pipeline that extracts structured vehicle specifications — torque values, dimensions, pressures — from PDF service manuals. Includes a React frontend and a FastAPI backend.
+> A RAG (Retrieval-Augmented Generation) pipeline that extracts structured vehicle specifications — torque values, dimensions, pressures — from PDF service manuals. Includes a React frontend and a FastAPI backend.
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)
+![Ollama](https://img.shields.io/badge/LLM-Llama%203.1%208B-black?logo=meta&logoColor=white)
+![FAISS](https://img.shields.io/badge/Vector%20Search-FAISS%20%2B%20BM25-orange)
+
+---
+
+## UI Screenshots
+
+📸 **[View all UI screenshots on Google Drive](https://drive.google.com/drive/folders/181nk4R4s3E6twERLDNkMkw0IcfdPHzlp?usp=drive_link)**
 
 ---
 
@@ -65,8 +77,8 @@ python phase1_extraction/pdf_extractor.py "your-service-manual.pdf" --out-dir ./
 
 # Phase 2 — build chunked FAISS index
 python phase2_chunking/chunker_embedder.py build \
-  --spec ./phase1_output/<name>_spec_segments.json \
-  --all  ./phase1_output/<name>_all_segments.json \
+  --spec ./phase1_output/<n>_spec_segments.json \
+  --all  ./phase1_output/<n>_all_segments.json \
   --out  ./phase2_index
 ```
 
@@ -96,9 +108,9 @@ npm run dev
 1. Open `http://localhost:5173`
 2. **Upload** a PDF or TXT service manual — the backend runs Phase 1 + Phase 2 automatically
 3. **Query** — type a natural-language spec question, e.g.:
-   - "Torque for brake caliper bolts"
-   - "Shock absorber lower nuts 4WD"
-   - "Halfshaft assembled length"
+   - `"Torque for brake caliper bolts"`
+   - `"Shock absorber lower nuts 4WD"`
+   - `"Halfshaft assembled length"`
 4. Results show component, spec type, value, unit, vehicle variant, and confidence
 5. **History** tab lists all past queries
 6. **Settings** tab lets you change the Ollama model, index directory, and retrieval depth (k)
@@ -130,16 +142,16 @@ curl -X POST http://localhost:8000/api/extract \
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/health` | Server health check |
-| GET | `/api/health` | Health + Ollama connectivity |
-| POST | `/api/upload` | Upload PDF/TXT, triggers Phase 1+2 indexing |
-| POST | `/api/query` | Query uploaded document by session ID |
-| POST | `/api/extract` | Query the pre-built index |
-| GET | `/api/history` | List query history |
-| DELETE | `/api/history` | Clear all history |
-| GET | `/api/config` | Get current config |
-| PATCH | `/api/config` | Update model, index dir, k |
-| GET | `/api/demo-queries` | List sample queries |
+| `GET` | `/health` | Server health check |
+| `GET` | `/api/health` | Health + Ollama connectivity |
+| `POST` | `/api/upload` | Upload PDF/TXT, triggers Phase 1+2 indexing |
+| `POST` | `/api/query` | Query uploaded document by session ID |
+| `POST` | `/api/extract` | Query the pre-built index |
+| `GET` | `/api/history` | List query history |
+| `DELETE` | `/api/history` | Clear all history |
+| `GET` | `/api/config` | Get current config |
+| `PATCH` | `/api/config` | Update model, index dir, k |
+| `GET` | `/api/demo-queries` | List sample queries |
 
 ---
 
@@ -153,6 +165,25 @@ Default config (changeable via `/api/config` PATCH or the Settings page):
 | `ollama_host` | `http://localhost:11434` | Ollama server URL |
 | `index_dir` | `./phase2_index` | Pre-built FAISS index path |
 | `k` | `8` | Number of chunks retrieved per query |
+
+---
+
+## Troubleshooting
+
+**Ollama not responding**
+```bash
+ollama serve        # start the service
+ollama list         # verify the model is available
+```
+
+**FAISS index not found**  
+Run Phases 1 and 2 before starting the backend, or use the Upload feature in the UI — it runs them automatically per session.
+
+**PDF extraction returns no specs**  
+The pipeline uses a PyMuPDF → pdfplumber → pdftotext fallback waterfall. If all three fail, the PDF is likely a scanned image — run it through an OCR tool like `tesseract` first to add a text layer.
+
+**Frontend can't reach the backend**  
+Check that the backend is on port `8000`. The Vite dev server proxies `/api` automatically, so no manual CORS config is needed in development.
 
 ---
 
@@ -186,3 +217,13 @@ predii-assignment/
 ├── requirements.txt
 └── README.md
 ```
+
+---
+
+## Tech Stack
+
+- **Embeddings** — `BAAI/bge-base-en-v1.5` via `sentence-transformers`
+- **Vector search** — FAISS + BM25 with Reciprocal Rank Fusion
+- **LLM** — Llama 3.1 8B via Ollama (local, no API key needed)
+- **Backend** — FastAPI + Uvicorn
+- **Frontend** — React 18 + Vite
